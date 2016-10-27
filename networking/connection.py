@@ -52,7 +52,8 @@ class Connection:
         self.handlers[byteid] = handler
 
     def sendmessage(self, byteid, data):
-        self.sock[0].sendall(bytearray(byteid) + encoder[byteid](data))
+        print(self.sock)
+        self.sock.sendall(bytearray(byteid) + encoder[byteid](data))
 
 
 def decode(byteid, bytedata):

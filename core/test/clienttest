@@ -1,5 +1,5 @@
 from networking import connection
-
+import time
 
 def cme(nm):
     bts = bytearray()
@@ -18,6 +18,7 @@ def cmd(data):
 
 connection.registertype(0b00000000, lambda d: cme(d), lambda d: cmd(d))
 connection.registertype(0b00000001, lambda n: bytearray(n), lambda d: d.decode('ascii'))
+connection.registertype(0b00000010, lambda d: d, lambda d: d)
 servname = ''
 
 
@@ -33,4 +34,8 @@ connection.mainport = 25565
 you = connection.connect(addr)
 you.registerhandler(0b00000001, lambda d: rsn(you, d))
 open = you.open()
+open.start()
+time.sleep(5)
+print('sent')
+you.sendmessage(0b00000010, b'')
 

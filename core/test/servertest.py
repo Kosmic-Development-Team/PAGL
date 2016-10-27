@@ -26,8 +26,9 @@ def onconnect(c):
         print(cn.name + ' has been id\'d as ' + name)
         cn.name = name
     nc.conn.registerhandler(0b00000001, lambda d: rcn(nc, d))
-    nc.conn.sendmessage(0b00000001, servname)
+    nc.conn.registerhandler(0b00000010, lambda d: nc.conn.sendmessage(0b00000001, servname))
     nc.conn.open()
+
 
 
 print('Server begin')
