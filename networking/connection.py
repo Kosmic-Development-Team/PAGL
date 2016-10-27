@@ -13,18 +13,19 @@ class Connection:
     def __init__(self, sock):
         self.sock = sock
         self.closed = False
-        self.onclose = []  # list of lambda-0
-        self.handlers = {}
+        self.oncloserun = []  # list of lambda-0
+        self.handlers = {}  # byte to lambda-1
 
     def close(self):
         self.closed = True
         self.sock.close()
         self.handlers.clear()
-        all(l() for l in self.onclose)
-        self.onclose.clear()
+        for l in self.oncloserun:
+            l()
+        self.oncloserun.clear()
 
     def onclose(self, lamb):
-        self.onclose.append(lamb)
+        self.oncloserun.append(lamb)
 
     def processmessage(self, byteid, bytedata):
         if not isinstance(self.handlers[byteid], None):
@@ -45,13 +46,13 @@ class Connection:
                     conn.processmessage(info[0], info[1:])
                 except:
                     pass
-        threading.Thread(target=receive(self)).run()
+        return threading.Thread(target=lambda: receive(self))
 
     def registerhandler(self, byteid, handler):
         self.handlers[byteid] = handler
 
     def sendmessage(self, byteid, data):
-        self.sock.sendall(bytearray(byteid).append(encoder[byteid](data)))
+        self.sock[0].sendall(bytearray(byteid) + encoder[byteid](data))
 
 
 def decode(byteid, bytedata):
@@ -73,18 +74,20 @@ def registertype(byte, en, de):  # look above
     decoder[byte] = de
 
 
-def sendmessage(byte, data):
+def sendmessage(byte, data, conn):
     message = encoder[byte](data)
+    conn.sock[0].sendall(message)
 
 
 def server(onconnect):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind((mainaddr, mainport))
+    sock.listen(1)
+
     def acceptclients():
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.bind((mainaddr, mainport))
-        sock.listen(1)
         while True:
-            client = sock.accept()
+            client = Connection(sock.accept())
             time.sleep(5)
             onconnect(client)
 
-    return threading.Thread(target=acceptclients())
+    return threading.Thread(target=acceptclients)
