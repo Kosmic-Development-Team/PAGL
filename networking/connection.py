@@ -1,94 +1,83 @@
 import socket
 import threading
-import time
 
-mainport = 24680
-mainaddr = 'localhost'
 
-encoder = {}  # byteid to lambda-1 ret bytes
-decoder = {}  # byteid to lambda-1 ret data
+port = 25565
+packsize = 16
+acceptclients = True
+decoders = {}  # byte to lambda-1 ret
+encoders = {}  # byte to lambda-1 ret
 
 
 class Connection:
     def __init__(self, sock):
         self.sock = sock
         self.closed = False
-        self.oncloserun = []  # list of lambda-0
+        self.closing = []
         self.handlers = {}  # byte to lambda-1
+
+    def onclose(self, lamb):
+        self.closing.append(lamb)
 
     def close(self):
         self.closed = True
         self.sock.close()
         self.handlers.clear()
-        for l in self.oncloserun:
+        for l in self.closing:
             l()
-        self.oncloserun.clear()
+        self.closing.clear()
 
-    def onclose(self, lamb):
-        self.oncloserun.append(lamb)
-
-    def processmessage(self, byteid, bytedata):
-        if not isinstance(self.handlers[byteid], None):
-            self.handlers.get(byteid)(decode(byteid, bytedata))
-        else:
-            print("Unknown message id:", byteid)
-            self.close()
+    def process(self, data):
+        byteid = data[0]
+        if byteid in self.handlers:
+            self.handlers[byteid](decoders[byteid](data[1:]))
 
     def open(self):
-        def receive(conn):
-            while not conn.closed:
-                try:
-                    bid = conn.sock.recv(256)
-                    info = bytearray()
-                    while bid:
-                        info.append(bytearray(bid))
-                        bid = conn.sock.recv(256)
-                    conn.processmessage(info[0], info[1:])
-                except:
-                    pass
-        return threading.Thread(target=lambda: receive(self))
+        def receive(client):
+            try:
+                buffer = bytearray()
+                while True:
+                    if len(buffer) > 0:
+                        dl = buffer[0]
+                        buffer = buffer[1:]
+                        while len(buffer) < dl:
+                            buffer += client.sock.recv(packsize)
+                        client.process(buffer[0:dl])
+                        buffer = buffer[dl:]
+                    else:
+                        buffer += client.sock.recv(packsize)
+            except ConnectionResetError:
+                client.close()
+        threading.Thread(target=lambda: receive(self)).start()
 
     def registerhandler(self, byteid, handler):
         self.handlers[byteid] = handler
 
     def sendmessage(self, byteid, data):
-        print(self.sock)
-        self.sock.sendall(bytearray(byteid) + encoder[byteid](data))
+        msg = bytearray([byteid]) + encoders[byteid](data)
+        msg = bytearray([len(msg)]) + msg
+        self.sock.sendall(msg)
 
 
-def decode(byteid, bytedata):
-    return decoder[byteid](bytedata)
-
-
-def encode(byteid, data):
-    return encoder[byteid](data)
+def registertype(byteid, en, de):
+    encoders[byteid] = en
+    decoders[byteid] = de
 
 
 def connect(ip):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((ip, mainport))
+    sock.connect((ip, port))
     return Connection(sock)
 
 
-def registertype(byte, en, de):  # look above
-    encoder[byte] = en
-    decoder[byte] = de
-
-
-def sendmessage(byte, data, conn):
-    message = encoder[byte](data)
-    conn.sock[0].sendall(message)
-
-
-def server(onconnect):
+def server(ip, onconnect):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind((mainaddr, mainport))
+    sock.bind((ip, port))
     sock.listen(1)
 
-    def acceptclients():
+    def acceptconn():
         while True:
-            client = Connection(sock.accept())
-            time.sleep(5)
-            onconnect(client)
-
-    return threading.Thread(target=acceptclients)
+            if acceptclients:
+                client = sock.accept()[0]
+                onconnect(client)
+    return threading.Thread(target=acceptconn)
