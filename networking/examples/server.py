@@ -10,6 +10,7 @@ def msgen(data):
 
 def msgde(data):
     nl = int(data[0])
+
     return data[1:nl + 1].decode('ascii'), data[nl + 1:].decode('ascii')
 
 

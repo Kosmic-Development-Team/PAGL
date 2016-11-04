@@ -22,14 +22,3 @@ def initiate(dim, texdim):  # dim and texdim both tuples of ints
 
 def calcpos(raw):  # takes a tuple position as input and returns a tuple output
     return raw[0] * dims[0], raw[1] * dims[1]
-
-
-# initiate((64 + 32, 32 + 4), (12, 18))
-# f = Font('../fonts/AS.png')
-# f.drawbasic(screen, 'Hello there sirs', (0, 0))
-# display.update()
-# while True:
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             pygame.quit()
-#             sys.exit()
