@@ -1,14 +1,9 @@
-import pygame
-from core.textures.font import Font
-from pygame import Color
 from pygame import display
-import sys
-import os
-
 
 screen = None
 dims = None
 wh = None
+fancy = False
 
 
 def initiate(dim, texdim):  # dim and texdim both tuples of ints
