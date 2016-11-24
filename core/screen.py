@@ -1,4 +1,4 @@
-from pygame import display
+import pygame
 
 screen = None
 dims = None
@@ -12,7 +12,7 @@ def initiate(dim, texdim):  # dim and texdim both tuples of ints
     global wh
     dims = dim
     wh = texdim
-    screen = display.set_mode((dim[0] * texdim[0], dim[1] * texdim[1]))
+    screen = pygame.display.set_mode((dim[0] * texdim[0], dim[1] * texdim[1]))
 
 
 def calcpos(raw):  # takes a tuple position as input and returns a tuple output

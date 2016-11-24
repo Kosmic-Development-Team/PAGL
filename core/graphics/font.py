@@ -1,11 +1,15 @@
-from pygame import Color
-from util.utility import *
 from core import screen
 import pygame
-import time
 
 
 fonts = []
+
+
+def gettex(sheet, rect):
+    rect = pygame.Rect(rect)
+    image = pygame.Surface(rect.size).convert()
+    image.blit(sheet, (0, 0), rect)
+    return image
 
 
 class Font:
