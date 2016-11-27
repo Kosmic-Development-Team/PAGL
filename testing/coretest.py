@@ -8,9 +8,9 @@ import pygame
 pressed = False
 
 
-def press(type):
+def press(pt):
     global pressed
-    if type:
+    if pt:
         if not pressed:
             print('hello')
             pressed = True
