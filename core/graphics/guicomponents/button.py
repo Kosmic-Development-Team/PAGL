@@ -14,6 +14,9 @@ class Button(Component):
         self.fontcode = fontcode
         self.selectedrun = selrun
 
+    def keyin(self, key):
+        self.selectedrun(key)
+
     def indexfromtext(self, text):
         self.indents = [[], []]
         for i in range(len(text)):
@@ -38,4 +41,4 @@ class Button(Component):
             f.drawindent(screen.screen, self.indents[1][i], self.backcols[i][fo:], (self.pos[0] + fo, self.pos[1] + i))
 
     def selected(self):
-        self.selectedrun()
+        self.selectedrun(None)
