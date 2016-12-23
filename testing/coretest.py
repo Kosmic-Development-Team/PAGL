@@ -28,11 +28,8 @@ def press(pt):
 game.timemin = 0.01
 game.texturedim = (8, 8)
 game.screendim = (60, 40)
-game.initiate()
+game.init()
 f = font.Font('C:/Users/Kosmic/Documents/PythonProjects/PRLGL/FONT.png')
-keyinput.addallkeys()
-for i in core.pygamekeys.skti:
-    keyinput.whenkey(i, True).onrun(lambda: print('h'))
 ti = Image.open('console.png')
 
 txto = ['                                                            ',
@@ -82,7 +79,7 @@ for k in range(40):
     for l in range(60):
         fc[k].append(Color(0, 255, 0, 255))
 
-g = gui.Gui((0, 0), (60, 40), 0, [], {}, txto, ti, fc)
+g = gui.Gui((0, 0), 0, [], {}, txto, ti, fc)
 g.draw()
 pygame.display.update()
 game.run()

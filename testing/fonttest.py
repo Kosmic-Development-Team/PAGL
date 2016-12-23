@@ -30,8 +30,8 @@ pygame.display.update()
 
 b = button.Button((10, 10), (12, 2), ['  Start',
                                       '       Game'], 0, None)
-b.backcols = [cb, cb]
-b.forecols = [cf, cf]
+b.back = [cb, cb]
+b.fore = [cf, cf]
 b.draw()
 
 pygame.display.update()

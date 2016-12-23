@@ -1,6 +1,7 @@
 from PFRPL.flow import signal
 from core import screen
 from core import keyinput
+from core import guimanager
 import pygame
 import sys
 import nanotime
@@ -15,7 +16,9 @@ __quittype = pygame.event.Event(12)
 timemin = 0.01
 
 
-def initiate():
+def init():
+    keyinput.init()
+    guimanager.init()
     update.onrun(keyinput.checkkeys)
     screen.initiate(texturedim, screendim)
 
