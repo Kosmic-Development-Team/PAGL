@@ -1,27 +1,30 @@
 from PFRPL.flow import signal
 from core import screen
 from core import keyinput
+from core import guimanager
 import pygame
 import sys
 import nanotime
 
 
 update = signal.Signal(0.0)
-screendim = (100, 50)
-texturedim = (16, 16)
+texturedim = (20, 20)
+screendim = (16, 16)
 closing = signal.Signal(None)
 running = False
 __quittype = pygame.event.Event(12)
 timemin = 0.01
 
 
-def initiate():
+def init():
+    keyinput.init()
+    guimanager.init()
     update.onrun(keyinput.checkkeys)
+    screen.initiate(texturedim, screendim)
 
 
 def run():
     global running
-    screen.initiate(screendim, texturedim)
     running = True
     last = int(nanotime.now())
     while running:

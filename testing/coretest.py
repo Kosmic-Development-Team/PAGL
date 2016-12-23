@@ -1,5 +1,10 @@
 from core import game
+import core
 from core import keyinput
+from core.graphics import gui
+import Image
+from core.graphics import font
+from pygame import Color
 from flow import signal
 import core
 import pygame
@@ -18,12 +23,65 @@ def press(pt):
         if pressed:
             pressed = False
 
+
+
 game.timemin = 0.01
-game.initiate()
-game.screendim = (25, 25)
-keyinput.addkeycheck(pygame.K_h)
-keyinput.keysigs[pygame.K_h].filtersignalbool(lambda x: x).onrun(lambda: press(True))
-keyinput.keysigs[pygame.K_h].filtersignalbool(lambda x: not x).onrun(lambda: press(False))
+game.texturedim = (8, 8)
+game.screendim = (60, 40)
+game.init()
+f = font.Font('C:/Users/Kosmic/Documents/PythonProjects/PRLGL/FONT.png')
+ti = Image.open('console.png')
+
+txto = ['                                                            ',
+        ' Welcome to PPCM3                                           ',
+        '  -Type ls to list files-                                   ',
+        ' root@PPCM3:~$                                              ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ',
+        '                                                            ']
+
+fc = []
+for k in range(40):
+    fc.append([])
+    for l in range(60):
+        fc[k].append(Color(0, 255, 0, 255))
+
+g = gui.Gui((0, 0), 0, [], {}, txto, ti, fc)
+g.draw()
+pygame.display.update()
 game.run()
 
 

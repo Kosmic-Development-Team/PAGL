@@ -29,7 +29,7 @@ class Font:
             print('Unable to load sprite sheet ' + filename)
 
     def drawindent(self, surface, length, backcols, pos):
-        pos = screen.calcpos(pos)
+        pos = screen.calcraw(pos)
         back = pygame.Surface((self.cw, self.ch))
         rct = back.get_rect()
         for i in range(length):
@@ -59,7 +59,7 @@ class Font:
         return pxs.make_surface()
 
     def drawbasic(self, surface, string, pos):  # surface : Surface/string : string/pos tuple
-        pos = screen.calcpos(pos)
+        pos = screen.calcraw(pos)
         count = 0
         for c in string:
             char = self.chars[ord(c)]
@@ -67,7 +67,7 @@ class Font:
             count += 1
 
     def draw(self, surface, string, backcols, forecols, pos):
-        pos = screen.calcpos(pos)
+        pos = screen.calcraw(pos)
         chs = [ord(c) for c in string]
         sz = len(chs)
         for i in range(sz):
@@ -76,7 +76,7 @@ class Font:
             surface.blit(c, rct)
 
     def drawblend(self, surface, string, backcols, forecols, pos):
-        pos = screen.calcpos(pos)
+        pos = screen.calcraw(pos)
         chs = [ord(c) for c in string]
         sz = len(chs)
         for i in range(sz):

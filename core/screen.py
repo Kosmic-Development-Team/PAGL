@@ -15,5 +15,9 @@ def initiate(dim, texdim):  # dim and texdim both tuples of ints
     screen = pygame.display.set_mode((dim[0] * texdim[0], dim[1] * texdim[1]))
 
 
-def calcpos(raw):  # takes a tuple position as input and returns a tuple output
-    return raw[0] * dims[0], raw[1] * dims[1]
+def calcraw(pos):  # takes a tuple position as input and returns a tuple output
+    return pos[0] * dims[0], pos[1] * dims[1]
+
+
+def calcpos(raw):
+    return int(raw[0] / dims[0]), int(raw[1] / dims[1])

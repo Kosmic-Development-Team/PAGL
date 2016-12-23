@@ -1,41 +1,36 @@
-from core.graphics.guicomponents.component import Component
+import core.guimanager
+from core.graphics.guicomponents import component
 from core import screen
 from core.graphics import font
 
 
-class Button(Component):
-    def __init__(self, pos, dim, text, fontcode, selrun):
-        super(self.__class__, self).__init__(pos, dim)
-        self.text = text
-        self.backcols = None
-        self.forecols = None
-        self.indents = None
-        self.indexfromtext(text)
-        self.fontcode = fontcode
-        self.selectedrun = selrun
+def defaultrun(s, k):
+    print('Button:', s.index, s.selected, s.selecagain)
 
-    def indexfromtext(self, text):
-        self.indents = [[], []]
-        for i in range(len(text)):
-            txt = text[i]
-            t = len(txt)
-            self.indents[0].append(t - len(txt.lstrip()))
-            self.indents[1].append(self.dim[0] - len(txt.rstrip()))
-            text[i] = txt.strip()
+
+class Button(component.Component):
+    def __init__(self, pos, text, fontcode, backcols, forecols, inrun=defaultrun):
+        super(self.__class__, self).__init__(pos, (len(backcols[0]), len(backcols)))
+        self.text = text
+        self.back = backcols
+        self.fore = forecols
+        self.indents = core.guimanager.indexfromtext(text, self.dim)
+        self.fontcode = fontcode
+        self.inputrun = inrun  # func-2 whenever key input
+
+    def keyin(self, key):
+        self.inputrun(self, key)
 
     def draw(self):
         f = font.fonts[self.fontcode]
         for i in range(len(self.text)):
-            f.drawindent(screen.screen, self.indents[0][i], self.backcols[i],
+            f.drawindent(screen.screen, self.indents[0][i], self.back[i],
                          (self.pos[0], self.pos[1] + i))
             if screen.fancy:
-                f.drawblend(screen.screen, self.text[i], self.backcols[i][self.indents[0][i]:], self.forecols[i],
+                f.drawblend(screen.screen, self.text[i], self.back[i][self.indents[0][i]:], self.fore[i],
                             (self.pos[0] + self.indents[0][i], self.pos[1] + i))
             else:
-                f.draw(screen.screen, self.text[i], self.backcols[i][self.indents[0][i]:], self.forecols[i],
+                f.draw(screen.screen, self.text[i], self.back[i][self.indents[0][i]:], self.fore[i],
                        (self.pos[0] + self.indents[0][i], self.pos[1] + i))
             fo = self.indents[0][i] + len(self.text[i])
-            f.drawindent(screen.screen, self.indents[1][i], self.backcols[i][fo:], (self.pos[0] + fo, self.pos[1] + i))
-
-    def selected(self):
-        self.selectedrun()
+            f.drawindent(screen.screen, self.indents[1][i], self.back[i][fo:], (self.pos[0] + fo, self.pos[1] + i))
