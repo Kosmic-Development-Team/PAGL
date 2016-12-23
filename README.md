@@ -1,2 +1,2 @@
-# PAGL
+# PAEL
 Python ASCII Engine Libraries
