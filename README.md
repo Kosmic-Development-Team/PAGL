@@ -1,2 +1,2 @@
-# PRLGL
-Python Rogue-Like Graphics Libraries
+# PAGL
+Python ASCII Engine Libraries
